@@ -5,7 +5,7 @@ const baseURL = 'api'
 // 创建 axios 实例
 const service = axios.create({
     baseURL: baseURL, // 请求地址前缀，将自动加在 url 前面
-    timeout: 6000 // 请求超时时间
+    timeout: 3000 // 请求超时时间
 })
 
 let loading=null // 将loading设置为全局  请求与响应一起使用
@@ -37,20 +37,21 @@ service.interceptors.request.use(function (config) {
     return Promise.reject(error);
 });
 
-// // 添加响应拦截器
-// service.interceptors.response.use(function (res) {
-//     if (res.status&&res.status==200){
-//         if (res.data.code==500||res.data===401||res.data.code==403){
-//             Message.error({message:res.data.message});
-//             return;
-//         }
-//     }
-//     if (res.data.message) Message.success({message:res.data.message});
-//     return res.data;
-// }, function (error) {
-//     if (error.response.data.message) Message.error({message:error.response.data.message});
-//     return;
-// });
+// 添加响应拦截器
+service.interceptors.response.use(function (res) {
+    loading.close();
+    if (res.status&&res.status==200){
+        if (res.data.code==500||res.data===401||res.data.code==403){
+            Message.error({message:res.data.message});
+            return;
+        }
+    }
+    if (res.data.message) Message.success({message:res.data.message});
+    return res.data;
+}, function (error) {
+    if (error.response.data.message) Message.error({message:error.response.data.message});
+    return;
+});
 
 
 export { service as axios }

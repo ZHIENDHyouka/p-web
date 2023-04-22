@@ -2,8 +2,8 @@
   <div id="app">
     <div class="loginbackgroundImg" v-show="!showRegisterOrLogin">
       <el-form
-          :rules="loginRules"  ref="loginForm"
-          class="loginContainer" :model="loginForm" >
+          :rules="loginRules" ref="loginForm"
+          class="loginContainer" :model="loginForm">
         <h3 class="loginTitle">登录</h3>
         <el-form-item prop="userAccount">
           <el-input type="text" placeholder="请输入账号" v-model="loginForm.userAccount"></el-input>
@@ -13,15 +13,15 @@
                     placeholder="请输入密码" v-model="loginForm.userPwd"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" round style="margin-left: 80px; width: 100px" @click="login('loginForm')" >登录
+          <el-button type="primary" round style="margin-left: 80px; width: 100px" @click="login('loginForm')">登录
           </el-button>
-          <el-link style="margin-left: 10px; color: cornflowerblue" @click="changeRegister" >注册</el-link>
+          <el-link style="margin-left: 10px; color: cornflowerblue" @click="changeRegister">注册</el-link>
         </el-form-item>
       </el-form>
     </div>
 
-    <div class="loginbackgroundImg" v-show="showRegisterOrLogin" >
-      <el-form ref="registerForm"  class="loginContainer"
+    <div class="loginbackgroundImg" v-show="showRegisterOrLogin">
+      <el-form ref="registerForm" class="loginContainer"
                :model="registerForm" :rules="registerRules">
         <h3 class="loginTitle">注册</h3>
         <el-form-item prop="userAccount">
@@ -32,17 +32,17 @@
                     placeholder="请输入密码" v-model="registerForm.userPwd"></el-input>
         </el-form-item>
         <el-form-item prop="userName">
-          <el-input  auto-complete="false" type="text"
+          <el-input auto-complete="false" type="text"
                     placeholder="请输入昵称" v-model="registerForm.userName"></el-input>
         </el-form-item>
         <el-form-item prop="sex">
-          <el-radio v-model="registerForm.sex" label= "1">男</el-radio>
-          <el-radio v-model="registerForm.sex" label= "0">女</el-radio>
+          <el-radio v-model="registerForm.sex" label="1">男</el-radio>
+          <el-radio v-model="registerForm.sex" label="0">女</el-radio>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" round style="margin-left: 80px; width: 100px" @click="register('registerForm')" >注册
+          <el-button type="primary" round style="margin-left: 80px; width: 100px" @click="register('registerForm')">注册
           </el-button>
-          <el-link style="margin-left: 10px;color: cornflowerblue"  @click="changeRegister" >登录</el-link>
+          <el-link style="margin-left: 10px;color: cornflowerblue" @click="changeRegister">登录</el-link>
         </el-form-item>
       </el-form>
     </div>
@@ -51,22 +51,22 @@
 
 <script>
 import axios from "axios";
-import {login} from "@/utils/api";
+import {login, register} from "@/utils/api";
 
 export default {
   name: 'app',
-  data(){
-    return{
-      showRegisterOrLogin:false,
-      registerForm:{
-        userAccount:'',
-        userPwd:'',
-        userName:'',
-        sex:'',
+  data() {
+    return {
+      showRegisterOrLogin: false,
+      registerForm: {
+        userAccount: '',
+        userPwd: '',
+        userName: '',
+        sex: '',
       },
-      loginForm:{
-        userAccount:'',
-        userPwd:'',
+      loginForm: {
+        userAccount: '',
+        userPwd: '',
       },
       loginRules: {
         userAccount: [
@@ -87,41 +87,70 @@ export default {
           {required: true, message: '请输入用户名', trigger: 'blur'},
         ],
         sex: [
-          {type: 'array', required: true, message: '请至少选择一个性别', trigger: 'change'},
+          { required: true, message: '请至少选择一个性别', trigger: 'change'},
         ],
       },
     }
   },
-  methods:{
-    changeRegister(){
-      this.showRegisterOrLogin=!this.showRegisterOrLogin;
+  methods: {
+    changeRegister() {
+      this.showRegisterOrLogin = !this.showRegisterOrLogin;
+      this.clearRegisterForm();
+      this.clearLoginForm();
     },
-    login(loginForm){
-        this.$refs[loginForm].validate((valid) => {
-          if (valid) {
-            login(this.loginForm).then(res=>{
-              console.log(res);
-            })
-          } else {
-            return false;
-          }
-        });
-      console.log(this.loginForm,1);
+    login(loginForm) {
+      this.$refs[loginForm].validate((valid) => {
+        if (valid) {
+          login(this.loginForm).then(res => {
+            const message = res.msg;
+            const code = res.code;
+            this.returnInfo(message, code);
+          })
+          this.clearLoginForm();
+        } else {
+          return false;
+        }
+      });
     },
-    register(registerForm){
+    register(registerForm) {
       console.log(this.registerForm);
       this.$refs[registerForm].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          register(this.registerForm).then((res) => {
+            const message = res.msg;
+            const code = res.code;
+            const flag = this.returnInfo(message, code);
+            if (flag) {
+              this.changeRegister();
+              this.loginForm.userAccount = this.registerForm.userAccount;
+              this.loginForm.userPwd = this.registerForm.userPwd;
+            }
+          });
         } else {
-          console.log('error submit!!');
+          // console.log('error submit!!');
           return false;
         }
       });
       // this.showRegisterOrLogin=!this.showRegisterOrLogin;
     },
-    get(){
-      axios.get("http://localhost:8083/aa").then()
+    clearLoginForm() {
+      this.loginForm.userAccount = '';
+      this.loginForm.userPwd = '';
+    },
+    clearRegisterForm() {
+      this.registerForm.sex = '';
+      this.registerForm.userAccount = '';
+      this.registerForm.userName = '';
+      this.registerForm.userPwd = '';
+    },
+    returnInfo(message, code) {
+      if (code === 0) {
+        this.$message.success(message);
+        return true;
+      } else {
+        this.$message.error(message);
+        return false;
+      }
     }
   }
 }
