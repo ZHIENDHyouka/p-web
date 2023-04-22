@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="Login">
     <div class="loginbackgroundImg" v-show="!showRegisterOrLogin">
       <el-form
           :rules="loginRules" ref="loginForm"
@@ -54,7 +54,7 @@ import axios from "axios";
 import {login, register} from "@/utils/api";
 
 export default {
-  name: 'app',
+  name: 'Login',
   data() {
     return {
       showRegisterOrLogin: false,
@@ -104,9 +104,12 @@ export default {
           login(this.loginForm).then(res => {
             const message = res.msg;
             const code = res.code;
-            this.returnInfo(message, code);
+            const flag = this.returnInfo(message, code);
+            if (flag) {
+              this.clearLoginForm();
+              this.$router.replace('/home');//页面跳转
+            }
           })
-          this.clearLoginForm();
         } else {
           return false;
         }

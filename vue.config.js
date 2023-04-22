@@ -13,7 +13,7 @@ module.exports = defineConfig({
   lintOnSave:false,//关闭语法检测
   //开启代理
   devServer:{
-    host:'localhost',
+    host:'0.0.0.0',//局域网访问
     port: 8082,
     proxy:{
       'api':{
