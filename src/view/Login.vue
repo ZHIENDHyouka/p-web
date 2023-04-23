@@ -105,6 +105,7 @@ export default {
             const message = res.msg;
             const code = res.code;
             const flag = this.returnInfo(message, code);
+            window.localStorage.setItem("userId",res.data);
             if (flag) {
               this.clearLoginForm();
               this.$router.replace('/home');//页面跳转

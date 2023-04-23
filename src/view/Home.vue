@@ -23,7 +23,7 @@ export default {
   name: "Home",
   data() {
     return {
-      activeIndex: '1',
+      activeIndex: this.$router.options.routes[1].children[0].path,
     };
   },
   methods: {}

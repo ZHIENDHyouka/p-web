@@ -49,6 +49,7 @@ service.interceptors.response.use(function (res) {
     if (res.data.message) Message.success({message:res.data.message});
     return res.data;
 }, function (error) {
+    loading.close();
     if (error.response.data.message) Message.error({message:error.response.data.message});
     return;
 });
