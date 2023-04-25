@@ -19,9 +19,9 @@ export function register(data){
 }
 
 //获取电影信息
-export function getAllMovieBaseInfo(){
+export function getScreenMovieBaseInfo(){
     return axios({
-        url:'movie/getAllMovieBaseInfo',
+        url:'movie/getScreenMovieBaseInfo',
         method:'get',
     })
 }
