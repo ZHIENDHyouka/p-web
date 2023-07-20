@@ -4,8 +4,7 @@
       <el-header>
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal"
                  router active-text-color="rgb(110,0,0)">
-          <el-menu-item v-for="(item,index) in this.$router.options.routes[1].children"
-                        :key="index" v-if="!item.hidden" :index="item.path">{{ item.name }}
+          <el-menu-item v-for="(item,index) in this.$router.options.routes[1].children" :key="index" v-if="!item.hidden" :index="item.path">{{ item.name }}
           </el-menu-item>
         </el-menu>
       </el-header>
@@ -39,6 +38,5 @@ export default {
   margin: 0 auto;
   text-align: center;
   display: inline-block;
-
 }
 </style>
